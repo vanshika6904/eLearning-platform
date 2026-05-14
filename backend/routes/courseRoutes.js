@@ -1,18 +1,22 @@
 import express from "express";
-import { createCourse, getCourses } from "../controllers/courseController.js";
+import {
+  createCourse,
+  getCourses,
+  getCourseById,
+  enrollCourse
+} from "../controllers/courseController.js";
+
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { authorize } from "../middlewares/roleMiddleware.js";
 
 const router = express.Router();
 
-// protected + role-based
+//router.post("/", createCourse);
+router.get("/", getCourses);
+router.get("/:id", getCourseById);
 router.post("/", authMiddleware, authorize("instructor"), createCourse);
 
-// public
-router.get("/", getCourses);
+// enroll
+router.post("/enroll/:id", authMiddleware, authorize("student", "instructor"), enrollCourse);
 
 export default router;
-import { enrollCourse } from "../controllers/courseController.js";
-
-// student only
-router.post("/:id/enroll", authMiddleware, authorize("student"), enrollCourse);
